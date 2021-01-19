@@ -13,7 +13,7 @@ class Augmenter(object):
             aug_word_min=self.force,
             aug_word_max=self.force,
             include_upper_case=True,
-            model_path="keyboard/fr-mobile.json",
+            model_path="../keyboard/fr-mobile.json",
         )
         self.swap_aug = char_aug.RandomCharAug(
             action="swap",
@@ -60,6 +60,8 @@ class Augmenter(object):
         """
         augmented_sentence = sentence
         for i in range(self.force):
+            if len(augmented_sentence) <= 1:
+                break
             index = self._get_letter_index(augmented_sentence)
             augmented_sentence = (
                 f"{augmented_sentence[:index]}{augmented_sentence[index+1:]}"
