@@ -1,4 +1,5 @@
 import random
+import nlpaug.augmenter.word as word_aug
 import nlpaug.augmenter.char as char_aug
 import os
 
@@ -13,7 +14,7 @@ class Augmenter(object):
             aug_word_min=self.force,
             aug_word_max=self.force,
             include_upper_case=True,
-            model_path="../keyboard/fr-mobile.json",
+            model_path="keyboard/fr-mobile.json",
         )
         self.swap_aug = char_aug.RandomCharAug(
             action="swap",
@@ -22,6 +23,11 @@ class Augmenter(object):
             aug_word_min=self.force,
             aug_word_max=self.force,
         )
+        # self.bert_aug = word_aug.ContextualWordEmbsAug(
+        #     model_path="camembert-base",
+        #     action="substitute",
+        #     aug_max=1,
+        # )
 
     def augment_keyboard(self, sentence: str):
         """Augment a given sentence by simulating keyboard typing mistakes.
@@ -79,6 +85,17 @@ class Augmenter(object):
         """
         return self.swap_aug.augment(sentence, n=1)
 
+    # def augment_bert(self, sentence: str):
+    #     """Augment a given sentence by changing words by synonyms.
+
+    #     Args:
+    #         sentence (str): Sentence to augment
+
+    #     Returns:
+    #         [str]: Augmented sentence
+    #     """
+    #     return self.bert_aug.augment(sentence, n=1)
+
     def _get_letter_index(self, sentence: str):
         """Get a random index for a sentence augmentation, making sur it's not a space.
         Args:
@@ -91,17 +108,3 @@ class Augmenter(object):
         while sentence[index] == " ":
             index = random.randint(0, len(sentence) - 1)
         return index
-
-    # TODO: add BERT augmentation
-
-
-# TODO: delete this test
-# aug = Augmenter(force=1)
-# sentence = "salut comment tu vas mon pote"
-# keyaug_sentence = aug.augment_keyboard(sentence)
-# letteraug_sentence = aug.augment_letter(sentence)
-# letterdel_sentence = aug.delete_letter(sentence)
-# letterswap_sentence = aug.swap_letter(sentence)
-# print(
-#     f"{sentence} -> sentence \n{keyaug_sentence} -> key_aug \n{letteraug_sentence} -> letter_aug \n{letterdel_sentence} -> letter_del\n{letterswap_sentence} -> letter_swap"
-# )
