@@ -23,11 +23,11 @@ class Augmenter(object):
             aug_word_min=self.force,
             aug_word_max=self.force,
         )
-        # self.bert_aug = word_aug.ContextualWordEmbsAug(
-        #     model_path="camembert-base",
-        #     action="substitute",
-        #     aug_max=1,
-        # )
+        self.bert_aug = word_aug.ContextualWordEmbsAug(
+            model_path="camembert-base",
+            action="substitute",
+            aug_max=1,
+        )
 
     def augment_keyboard(self, sentence: str):
         """Augment a given sentence by simulating keyboard typing mistakes.
@@ -85,16 +85,19 @@ class Augmenter(object):
         """
         return self.swap_aug.augment(sentence, n=1)
 
-    # def augment_bert(self, sentence: str):
-    #     """Augment a given sentence by changing words by synonyms.
+    def augment_bert(self, sentence: str):
+        """Augment a given sentence by changing words by synonyms.
 
-    #     Args:
-    #         sentence (str): Sentence to augment
+        Args:
+            sentence (str): Sentence to augment
 
-    #     Returns:
-    #         [str]: Augmented sentence
-    #     """
-    #     return self.bert_aug.augment(sentence, n=1)
+        Returns:
+            [str]: Augmented sentence
+        """
+        augmented_sentence = sentence
+        for i in range(self.force):
+            augmented_sentence = self.bert_aug.augment(augmented_sentence, n=1)
+        return augmented_sentence
 
     def _get_letter_index(self, sentence: str):
         """Get a random index for a sentence augmentation, making sur it's not a space.
